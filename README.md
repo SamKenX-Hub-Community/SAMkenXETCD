@@ -51,7 +51,6 @@ The easiest way to get etcd is to use one of the pre-built release binaries whic
 For more installation guides, please check out [play.etcd.io](http://play.etcd.io) and [operating etcd](https://etcd.io/docs/latest/op-guide).
 
 [github-release]: https://github.com/etcd-io/etcd/releases
-[branch-management]: https://etcd.io/docs/latest/branch_management
 
 ### Running etcd
 
@@ -74,15 +73,15 @@ This will bring up etcd listening on port 2379 for client communication and on p
 
 Next, let's set a single key, and then retrieve it:
 
-```
+```bash
 etcdctl put mykey "this is awesome"
 etcdctl get mykey
 ```
 
 etcd is now running and serving client requests. For more, please check out:
 
-- [Interactive etcd playground](http://play.etcd.io)
-- [Animated quick demo](https://etcd.io/docs/latest/demo)
+* [Interactive etcd playground](http://play.etcd.io)
+* [Animated quick demo](https://etcd.io/docs/latest/demo)
 
 ### etcd TCP ports
 
@@ -104,11 +103,7 @@ This will bring up 3 etcd members `infra1`, `infra2` and `infra3` and optionally
 
 Every cluster member and proxy accepts key value reads and key value writes.
 
-Follow the steps in [Procfile.learner](./Procfile.learner) to add a learner node to the cluster. Start the learner node with:
-
-```bash
-goreman -f ./Procfile.learner start
-```
+Follow the comments in [Procfile script](./Procfile) to add a learner node to the cluster.
 
 ### Install etcd client v3
 
@@ -120,13 +115,14 @@ go get go.etcd.io/etcd/client/v3
 
 Now it's time to dig into the full etcd API and other guides.
 
-- Read the full [documentation][].
-- Explore the full gRPC [API][].
-- Set up a [multi-machine cluster][clustering].
-- Learn the [config format, env variables and flags][configuration].
-- Find [language bindings and tools][integrations].
-- Use TLS to [secure an etcd cluster][security].
-- [Tune etcd][tuning].
+* Read the full [documentation].
+* Review etcd [frequently asked questions].
+* Explore the full gRPC [API].
+* Set up a [multi-machine cluster][clustering].
+* Learn the [config format, env variables and flags][configuration].
+* Find [language bindings and tools][integrations].
+* Use TLS to [secure an etcd cluster][security].
+* [Tune etcd][tuning].
 
 [documentation]: https://etcd.io/docs/latest
 [api]: https://etcd.io/docs/latest/learning/api
@@ -138,23 +134,21 @@ Now it's time to dig into the full etcd API and other guides.
 
 ## Contact
 
-- Email: [etcd-dev](https://groups.google.com/forum/?hl=en#!forum/etcd-dev)
-- Slack: [#etcd](https://kubernetes.slack.com/messages/C3HD8ARJ5/details/) channel on Kubernetes ([get an invite](http://slack.kubernetes.io/))
-- [Community meetings](#Community-meetings)
+* Email: [etcd-dev](https://groups.google.com/g/etcd-dev)
+* Slack: [#etcd](https://kubernetes.slack.com/messages/C3HD8ARJ5/details/) channel on Kubernetes ([get an invite](http://slack.kubernetes.io/))
+* [Community meetings](#community-meetings)
 
 ### Community meetings
 
-etcd contributors and maintainers have monthly (every four weeks) meetings at 11:00 AM (USA Pacific) on Thursday.
+etcd contributors and maintainers meet every two weeks at 11:00 AM (USA Pacific) on Thursday.
 
 An initial agenda will be posted to the [shared Google docs][shared-meeting-notes] a day before each meeting, and everyone is welcome to suggest additional topics or other agendas.
 
 Meeting recordings are uploaded to official etcd [YouTube channel].
 
-Get calendar invitation by joining [etcd-dev](https://groups.google.com/forum/?hl=en#!forum/etcd-dev) mailing group.
+Get calendar invitation by joining [etcd-dev](https://groups.google.com/g/etcd-dev) mailing group.
 
-Join Hangouts Meet: [meet.google.com/umg-nrxn-qvs](https://meet.google.com/umg-nrxn-qvs)
-
-Join by phone: +1 405-792-0633‬ PIN: ‪299 906‬#
+Join CNCF-funded Zoom channel: [zoom.us/my/cncfetcdproject](https://zoom.us/my/cncfetcdproject)
 
 [shared-meeting-notes]: https://docs.google.com/document/d/16XEGyPBisZvmmoIHSZzv__LoyOeluC5a4x353CX0SIM/edit
 [YouTube channel]: https://www.youtube.com/channel/UC7tUWR24I5AR9NMsG-NYBlg
@@ -165,9 +159,13 @@ See [CONTRIBUTING](CONTRIBUTING.md) for details on setting up your development e
 
 Please refer to [community-membership.md](Documentation/contributor-guide/community-membership.md#member) for information on becoming an etcd project member.  We welcome and look forward to your contributions to the project!
 
+Please also refer to [roadmap](Documentation/contributor-guide/roadmap.md) to get more details on the priorities for the next few major or minor releases.
+
 ## Reporting bugs
 
-See [reporting bugs](https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/reporting_bugs.md) for details about reporting any issues.
+See [reporting bugs](https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/reporting_bugs.md) for details about reporting any issues. Before opening an issue please check it is not covered in our [frequently asked questions].
+
+[frequently asked questions]: https://etcd.io/docs/latest/faq
 
 ## Reporting a security vulnerability
 
@@ -189,7 +187,6 @@ These emeritus maintainers dedicated a part of their career to etcd and reviewed
 * Joe Betz
 * Gyuho Lee
 * Jingyi Hu
-* Wenjia Zhang
 * Xiang Li
 * Ben Darnell
 * Sam Batschelet

@@ -15,7 +15,6 @@
 package membership
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha1"
 	"encoding/binary"
@@ -215,7 +214,7 @@ func (c *RaftCluster) ClientURLs() []string {
 func (c *RaftCluster) String() string {
 	c.Lock()
 	defer c.Unlock()
-	b := &bytes.Buffer{}
+	b := &strings.Builder{}
 	fmt.Fprintf(b, "{ClusterID:%s ", c.cid)
 	var ms []string
 	for _, m := range c.members {
@@ -854,4 +853,31 @@ func ValidateMaxLearnerConfig(maxLearners int, members []*Member, scaleUpLearner
 	}
 
 	return nil
+}
+
+func (c *RaftCluster) Store(store v2store.Store) {
+	c.Lock()
+	defer c.Unlock()
+
+	verifyNoMembersInStore(c.lg, store)
+
+	for _, m := range c.members {
+		mustSaveMemberToStore(c.lg, store, m)
+		if m.ClientURLs != nil {
+			mustUpdateMemberAttrInStore(c.lg, store, m)
+		}
+		c.lg.Info(
+			"snapshot storing member",
+			zap.String("id", m.ID.String()),
+			zap.Strings("peer-urls", m.PeerURLs),
+			zap.Bool("is-learner", m.IsLearner),
+		)
+	}
+	for id, _ := range c.removed {
+		//We do not need to delete the member since the store is empty.
+		mustAddToRemovedMembersInStore(c.lg, store, id)
+	}
+	if c.version != nil {
+		mustSaveClusterVersionToStore(c.lg, store, c.version)
+	}
 }

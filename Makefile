@@ -64,8 +64,8 @@ fuzz:
 
 verify: verify-gofmt verify-bom verify-lint verify-dep verify-shellcheck verify-goword \
 	verify-govet verify-license-header verify-receiver-name verify-mod-tidy verify-shellcheck \
-	verify-shellws verify-proto-annotations verify-genproto verify-goimport
-fix: fix-bom fix-lint
+	verify-shellws verify-proto-annotations verify-genproto verify-goimport verify-yamllint
+fix: fix-goimports fix-bom fix-lint fix-yamllint
 	./scripts/fix.sh
 
 .PHONY: verify-gofmt
@@ -76,7 +76,7 @@ verify-gofmt:
 verify-bom:
 	PASSES="bom" ./scripts/test.sh
 
-.PHONY: update-bom
+.PHONY: fix-bom
 fix-bom:
 	./scripts/updatebom.sh
 
@@ -86,11 +86,11 @@ verify-dep:
 
 .PHONY: verify-lint
 verify-lint:
-	golangci-lint run
+	golangci-lint run --config tools/.golangci.yaml
 
-.PHONY: update-lint
+.PHONY: fix-lint
 fix-lint:
-	golangci-lint run --fix
+	golangci-lint run --config tools/.golangci.yaml --fix
 
 .PHONY: verify-shellcheck
 verify-shellcheck:
@@ -132,6 +132,36 @@ verify-genproto:
 verify-goimport:
 	PASSES="goimport" ./scripts/test.sh
 
+.PHONY: fix-goimports
+fix-goimports:
+	./scripts/fix-goimports.sh
+
+.PHONY: verify-yamllint
+verify-yamllint:
+	yamllint --config-file tools/.yamllint .
+
+YAMLFMT_VERSION = $(shell cd tools/mod && go list -m -f '{{.Version}}' github.com/google/yamlfmt)
+
+.PHONY: fix-yamllint
+fix-yamllint:
+ifeq (, $(shell which yamlfmt))
+	$(shell go install github.com/google/yamlfmt/cmd/yamlfmt@$(YAMLFMT_VERSION))
+endif
+	yamlfmt -conf tools/.yamlfmt .
+
+# Tools
+
+.PHONY: install-lazyfs
+install-lazyfs: bin/lazyfs
+
+bin/lazyfs:
+	rm /tmp/lazyfs -rf
+	git clone --depth 1 --branch 0.2.0 https://github.com/dsrhaslab/lazyfs /tmp/lazyfs
+	cd /tmp/lazyfs/libs/libpcache; ./build.sh
+	cd /tmp/lazyfs/lazyfs; ./build.sh
+	mkdir -p ./bin
+	cp /tmp/lazyfs/lazyfs/build/lazyfs ./bin/lazyfs
+
 # Cleanup
 
 clean:
@@ -139,6 +169,7 @@ clean:
 	rm -rf ./covdir
 	rm -f ./bin/Dockerfile-release
 	rm -rf ./bin/etcd*
+	rm -rf ./bin/lazyfs
 	rm -rf ./default.etcd
 	rm -rf ./tests/e2e/default.etcd
 	rm -rf ./release
